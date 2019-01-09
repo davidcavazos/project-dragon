@@ -9,6 +9,7 @@ from google.cloud import storage
 
 import os
 import argparse
+import time
 import shutil
 
 import fitz
@@ -19,7 +20,25 @@ import matplotlib.pyplot as plt
 
 import scipy.misc
 
-def create_automl_dataset(project_id, compute_region, dataset_name, classification_type ="MULTICLASS"):
+date_str = time.strftime("%Y%m%d%H%M%S")
+project_id = 'project-dragon-2019'
+compute_region = 'us-central1'
+dataset_name = 'MVP_dataset_'+date_str
+
+bucket_name = 'project-dragon-2019-vcm'
+csv_VM_path = './dragon-2019-v2.csv'
+model_name_prefix = 'MVP_model_'+ date_str
+
+automl_client = automl.AutoMlClient()
+storage_client = storage.Client()
+prediction_client = automl.PredictionServiceClient()
+
+#A resource that represents Google Cloud Platform location.
+project_location = automl_client.location_path(project_id, compute_region)
+
+
+def create_automl_dataset(project_id, compute_region, 
+    dataset_name, classification_type ="MULTICLASS"):
     """Create a placeholder dataset.
     Input
     params: str project_id
@@ -58,6 +77,8 @@ def create_automl_dataset(project_id, compute_region, dataset_name, classificati
     dataset_blob = automl_client.create_dataset(project_location, my_dataset)
     return dataset_blob
 
+dataset_blob = create_automl_dataset(project_id,compute_region,dataset_name)
+
 def import_dataset(project_id, compute_region, 
                    dataset_blob, gcs_csv_path):
     """Fill in the dataset placeholder.
@@ -90,8 +111,12 @@ def import_dataset(project_id, compute_region,
 
     print("Processing import...")
     # synchronous check of operation status.
-    return print("Data imported. {}".format(response.result()))
+    return "Data imported. {}".format(response.result())
 
+import_dataset(project_id, compute_region,
+    dataset_blob, 'gs://project-dragon-2019-vcm/csv/dragon-2019-v2.csv')
+print ('Importing dataset requires 15 min to sync.')
+time.sleep(900)
 
 def train_model(dataset_blob, version=1, train_budget='1'):
     """Train model.
@@ -124,6 +149,8 @@ def train_model(dataset_blob, version=1, train_budget='1'):
     model = automl_client.create_model(project_location, my_model)
     print ("Training operation name: {}".format(model.operation.name))
     return model
+
+model = train_model(dataset_blob, version=2, train_budget=3)
 
 def predict_automl_model (model, bucket_name, gcs_path,
              local_path=None, score_threshold='0.5'):

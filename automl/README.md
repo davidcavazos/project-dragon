@@ -55,7 +55,7 @@ python preprocess.py \
 --$COMPUTE_REGION \
 --'invoices-jan-2019' \
 --$BUCKET_NAME \
---$PREFIX_LOCAL_PATH
+--$PREFIX_LOCAL_PATH \
 --1 \
 --False
 ```
@@ -77,8 +77,8 @@ python predict_automl.py \
 --$PROJECT_ID \
 --$COMPUTE_REGION \
 --$BUCKET_NAME \
---'MVP_model_201901090036452'
---'predict_img/1132019/invoice_id.pdf'
+--'MVP_model_201901090036452' \
+--'predict_img/1132019/invoice_id.pdf' \
 --'0.2'
 
 ```

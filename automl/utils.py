@@ -1,16 +1,13 @@
-# TODO: Operationalize code
-# TODO: Argument parsing
-# TODO: Class style
-
 import pandas as pd
 import numpy as np
 from google.cloud import automl_v1beta1 as automl
 from google.cloud import storage
 
 import os
-import argparse
 import time
 import shutil
+import sys
+import argparse
 
 import fitz
 import cv2 
@@ -21,20 +18,13 @@ import matplotlib.pyplot as plt
 import scipy.misc
 
 date_str = time.strftime("%Y%m%d%H%M%S")
-project_id = 'project-dragon-2019'
-compute_region = 'us-central1'
-dataset_name = 'MVP_dataset_'+date_str
-
-bucket_name = 'project-dragon-2019-vcm'
-csv_VM_path = './dragon-2019-v2.csv'
-model_name_prefix = 'MVP_model_'+ date_str
 
 automl_client = automl.AutoMlClient()
 storage_client = storage.Client()
 prediction_client = automl.PredictionServiceClient()
 
 #A resource that represents Google Cloud Platform location.
-project_location = automl_client.location_path(project_id, compute_region)
+
 
 
 def create_automl_dataset(project_id, compute_region, 
@@ -77,7 +67,7 @@ def create_automl_dataset(project_id, compute_region,
     dataset_blob = automl_client.create_dataset(project_location, my_dataset)
     return dataset_blob
 
-dataset_blob = create_automl_dataset(project_id,compute_region,dataset_name)
+#dataset_blob = create_automl_dataset(project_id,compute_region,dataset_name)
 
 def import_dataset(project_id, compute_region, 
                    dataset_blob, gcs_csv_path):
@@ -113,10 +103,10 @@ def import_dataset(project_id, compute_region,
     # synchronous check of operation status.
     return "Data imported. {}".format(response.result())
 
-import_dataset(project_id, compute_region,
-    dataset_blob, 'gs://project-dragon-2019-vcm/csv/dragon-2019-v2.csv')
-print ('Importing dataset requires 15 min to sync.')
-time.sleep(900)
+# import_dataset(project_id, compute_region,
+#     dataset_blob, 'gs://project-dragon-2019-vcm/csv/dragon-2019-v2.csv')
+# print ('Importing dataset requires 15 min to sync.')
+# time.sleep(900)
 
 def train_model(dataset_blob, version=1, train_budget='1'):
     """Train model.
@@ -150,49 +140,58 @@ def train_model(dataset_blob, version=1, train_budget='1'):
     print ("Training operation name: {}".format(model.operation.name))
     return model
 
-model = train_model(dataset_blob, version=2, train_budget=3)
+#model = train_model(dataset_blob, version=2, train_budget=3)
 
-def predict_automl_model (model, bucket_name, gcs_path,
-             local_path=None, score_threshold='0.5'):
-    """
-    Input
-    params: model: model blob
-    params: str bucket_name
-    params: str gcs_path: folder_1/folder_n/image_title
-    params: str local_path
-    params: str score_threshold: Classification decision
-    """
-    model_id = model.name.split("/")[-1]
-    # Get the full path of the model.
-    model_full_id = automl_client.model_path(
-        project_id, compute_region, model_id)
 
-    # Read the image and assign to payload.
-    if local_path == None:
-        bucket = storage_client.get_bucket(bucket_name)
-        blob = bucket.blob(gcs_path)
-        content = blob.download_as_string()
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Create an AutoML schema')
+
+    parser.add_argument('--project_id', required=True,
+                        help='GCP project ID that will host the Application')
+
+    parser.add_argument('--compute_region', required=False,
+                        help='Compute region that will host the Application')
+
+    parser.add_argument('--dataset_name', required=True,
+                        help='Only underscore _ and numbers are allowed as special characters.\
+                        Note: date will be concatenated to the dataset name')
+
+    parser.add_argument('--bucket_name', required=True,
+                        help='GCS bucket name without gs://')
+
+    parser.add_argument('--model_name_prefix', required=True,
+                help='Only underscore _ and numbers are allowed as special characters.\
+                Note: that date will be concatenated to the model name')
+
+    parser.add_argument('--train_budget', type=int, required=True,
+                help='Training hours budget.')
+
+    args = parser.parse_args()
     
-    else:
-        with open(local_path, "rb") as image_file:
-            content = image_file.read()
-            
-    payload = {"image": {"image_bytes": content}}
+    project_id = args.project_id
+    compute_region = args.compute_region
+    dataset_name = args.dataset_name + '_' + date_str
+    bucket_name = args.bucket_name
+    train_budget = args.train_budget 
+    model_name_prefix = args.model_name_prefix + '_' + date_str
 
-    # params is additional domain-specific parameters.
-    # score_threshold is used to filter the result
-    # Initialize params
-    params = {}
-    if score_threshold:
-        params = {"score_threshold": score_threshold}
+    project_location = automl_client.location_path(project_id, compute_region)
+    csv_gcs_path = 'gs://{}/csv/{}-v{}.csv'.format(dataset_name,version)
 
-    pred_response = prediction_client.predict(model_full_id, payload, params)
-    print("Prediction results:")
-    for result in pred_response.payload:
-        print("Predicted class name: {}".format(result.display_name))
-        print("Predicted class score: {}".format(result.classification.score))
-    return pred_response, model_id
+    # Create dataset placeholder
+    dataset_blob = create_automl_dataset(project_id,compute_region,dataset_name)
 
+    # Import images to dataset placeholder
+    import_dataset(project_id, compute_region, dataset_blob, csv_gcs_path)
+    print ('Importing dataset requires 15 min to sync.')
+    time.sleep(900)
+
+    print ('Training is starting now.')
+    # Train model
+    model = train_model(dataset_blob, version=1, train_budget=train_budget)
+    print ('DONE!')
+    print ('Use this model id for prediction: {}'.format(model.name.split("/")[-1]))
     
 
 

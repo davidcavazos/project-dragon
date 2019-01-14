@@ -1,8 +1,13 @@
 import os
+import time
+import shutil
+import sys
+import argparse
+
+
 import fitz 
 import csv
 from google.cloud import storage 
-import shutil
 from PIL import Image
 from math import ceil
 from imgaug import augmenters as iaa
@@ -11,14 +16,7 @@ import numpy as np
 
 storage_client = storage.Client()
 
-
-for folder_name in os.listdir('./docs-project-dragon/'):
-    for sub_folder in os.listdir('./docs-project-dragon/{}/'.format(folder_name)):
-        try:
-            shutil.rmtree('./docs-project-dragon/{}/{}'.format(folder_name,sub_folder))
-        except:
-            pass
-
+# Data Augmentation script from imgaug repo
 
 #Sometimes(0.5, ...) applies the given augmenter in 50% of all cases,
 # e.g. Sometimes(0.5, GaussianBlur(0.3)) would blur roughly every second image.
@@ -34,11 +32,11 @@ seq = iaa.Sequential(
         #iaa.Fliplr(0.5), # horizontally flip 50% of all images
         #iaa.Flipud(0.2), # vertically flip 20% of all images
         # crop images by -5% to 10% of their height/width
-        sometimes(iaa.CropAndPad(
-            percent=(-0.05, 0.05),
-            pad_mode=ia.ALL,
-            pad_cval=(0, 255)
-        )),
+        # sometimes(iaa.CropAndPad(
+        #     percent=(-0.05, 0.05),
+        #     pad_mode=ia.ALL,
+        #     pad_cval=(0, 255)
+        # )),
         sometimes(iaa.Affine(
             scale={"x": (0.9, 1.1), "y": (0.9, 1.1)}, # scale images to 90-110% of their size, individually per axis
             #translate_percent={"x": (-0.2, 0.2), "y": (-0.2, 0.2)}, # translate by -20 to +20 percent (per axis)
@@ -86,7 +84,11 @@ seq = iaa.Sequential(
 )
 
 
-def pdf_to_png(pdf_filename,version) :
+def pdf_to_png(pdf_filename,version):
+    """ Converts pdf to png.
+    param: pdf_filename - str
+    param: version - Version of the dataset
+    """
 
     pdf_dirname = os.path.dirname(pdf_filename)
     pdf_title = os.path.basename(pdf_filename)
@@ -105,15 +107,16 @@ def pdf_to_png(pdf_filename,version) :
         page_pixmap.writePNG(img_filename)
         return pdf_document.close()
 
-def compute_nbr_labels(label,version):
-    nbr_files = []
-    for fileList in os.listdir('./docs-project-dragon/{}/img{}'.format(label,version)):
-        nbr_files.append(fileList)
-    return nbr_files
 
 def augment_dataset(label, tot_aug_img,version):
-
-    nbr_files = compute_nbr_labels(label,2)
+    """ Data augmentation script.
+    param: label - str - folder name
+    param: tot_aug_img - int - Augmentation size
+    param: version - int - version of the dataset
+    """
+    nbr_files = []
+    for fileList in os.listdir('{}/{}/img{}'.format(prefix_local_path,label,version)):
+        nbr_files.append(fileList)
 
     for i in range(0,len(nbr_files)):
         # Setting default 1000 images per class
@@ -123,7 +126,7 @@ def augment_dataset(label, tot_aug_img,version):
             for augment_idx in range(0,int(ceil((tot_aug_img-len(nbr_files))/len(nbr_files)))):
                 try:
                     #print (nbr_files[i])
-                    image = np.array(Image.open('./docs-project-dragon/{}/img{}/{}'.format(label,version,nbr_files[i])))
+                    image = np.array(Image.open('{}/{}/img{}/{}'.format(prefix_local_path,label,version,nbr_files[i])))
                     # If image is grayscale, resize to 3 channel np array
                     if len(image.shape) ==2:
                         image = np.resize(image, (image.shape[0], image.shape[1], 3))
@@ -131,28 +134,36 @@ def augment_dataset(label, tot_aug_img,version):
                     # data aug methods requires 3D arrays
                     result = Image.fromarray(seq.augment_image(image).astype('uint8'),'RGB')
                     #print('augmented_img_created')
-                    result.save("./docs-project-dragon/{}/img{}/aug{}_{}".format(label,version,augment_idx,nbr_files[i]))
+                    result.save("{}/{}/img{}/aug{}_{}".format(prefix_local_path,label,version,augment_idx,nbr_files[i]))
                 except Exception as e:
                     print (e)
 
 def append_to_csv(pdf_filename,version):
+    """ Add images to training dataset.
+    param: pdf_filename - str - img local path
+    param: version - version of the dataset
+    """
+
     pdf_title = os.path.basename(pdf_filename)
     pdf_wtout_ext, pdf_ext = os.path.splitext(pdf_title)
 
-    gcs_path = 'gs://project-dragon-2019-vcm/images_v2/{}.png'.format(pdf_wtout_ext)
+    gcs_path = 'gs://{}/images_v{}/{}.png'.format(bucket_name, version, pdf_wtout_ext)
 
-    if os.path.isfile('./dragon-2019-v{}.csv'.format(version)) != True:
-        with open('./dragon-2019-v{}.csv'.format(version),mode='w') as newFile:
+    if os.path.isfile('./{}-v{}.csv'.format(dataset_name,version)) != True:
+        with open('./{}-v{}.csv'.format(dataset_name,version),mode='w') as newFile:
             newFile_writer = csv.writer(newFile, delimiter=',')
-            newFile_writer.writerow(['image','label'])
             newFile_writer.writerow([gcs_path, folder_name])
     else:
-    	with open('dragon-2019-v{}.csv'.format(version), mode='a') as existFile:
+    	with open('{}-v{}.csv'.format(dataset_name,version), mode='a') as existFile:
     	    existFile_writer = csv.writer(existFile, delimiter=',')
 	    existFile_writer.writerow([gcs_path, folder_name])
 
 def upload_img(pdf_filename, bucket_name,version):
-    """Upload CSV file."""
+    """Upload img to GCS
+    param: pdf_filename - str - img local path
+    param: bucket_name - str - GCS bucket name
+    param: version - version of the dataset
+    """
     
     file_dirname = os.path.dirname(pdf_filename)
     file_title = os.path.basename(pdf_filename)
@@ -170,28 +181,100 @@ def upload_img(pdf_filename, bucket_name,version):
     
     return blob.upload_from_filename(img_local_path)
 
-for folder_name in os.listdir('./docs-project-dragon/'):
-    #print folder_name
-    for path, subdirs, files in os.walk("./docs-project-dragon/{}".format(folder_name)):
-        for name in files:
-            print (name)
-            pdf_filename = str(os.path.join(path, name))
-            pdf_to_png(pdf_filename,2)
+def upload_csv(dataset_name, version, bucket_name):
+    """ Upload csv aggregating all images in a dataset
+    param: dataset_name - str -
+    param: version - version of the dataset
+    param: bucket_name - str - GCS bucket name
+    """
 
-#print ('================================')
-#print ('pdf to png is DONE')
-#print ('================================')
+    bucket = storage_client.get_bucket(bucket_name)
+    csv_local_path = './{}-v{}.csv'.format(dataset_name,version)
+    output_gcs_path = 'csv/{}-v{}.csv'.format(dataset_name,version)
+    blob = bucket.blob(output_gcs_path)
+    
+    return blob.upload_from_filename(csv_local_path)
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Augmentation data schema')
+
+    parser.add_argument('--project_id', required=True,
+                        help='GCP project ID that will host the Application')
+
+    parser.add_argument('--compute_region', required=False,
+                        help='Compute region that will host the Application')
+
+    parser.add_argument('--bucket_name', required=True,
+                        help='GCS bucket name without gs://')
+
+    parser.add_argument('--prefix_local_path', required=True,
+                        help='prefix of the master folder that contains all raw images')
+
+    parser.add_argument('--version', required=True, type=int,
+                        help='Local path that contains raw images')
+
+    parser.add_argument('--dataset_name', required=True,
+                        help='Dataset name that will be used to name csv file.')
+
+    parser.add_argument('--optimal_augmentation', required=True, type=bool,
+                        help='Optimal augmentation defines full or partial optimization goal.\
+                        Can be time consuming.')
+
+    args = parser.parse_args()
+    
+    project_id = args.project_id
+    compute_region = args.compute_region
+    dataset_name = args.dataset_name
+    bucket_name = args.bucket_name 
+    prefix_local_path = args.prefix_local_path
+    version = args.version
+    optimal_augmentation = args.optimal_augmentation
+
+    if optimal_augmentation == True:
+        aug_size = 1000
+    else:
+        aug_size = 100
+    #e.g
+    # project_id = 'project-dragon-2019'
+    # compute_region = 'us-west1'
+    # dataset_name = 'invoices'
+    # bucket_name = 'project-dragon-2019-vcm'
+    # local_path = './docs-project-dragon'
+    # version = 2
+
+    # TODO: Incremental img processing
+
+    # Clean directory 
+    for folder_name in os.listdir(prefix_local_path):
+    for sub_folder in os.listdir('{}/{}/'.format(prefix_local_path,folder_name)):
+        try:
+            shutil.rmtree('{}/{}/{}'.format(prefix_local_path,folder_name,sub_folder))
+        except:
+            pass
+
+    # Conversion pdf to png step
+    for folder_name in os.listdir('{}/'.format(prefix_local_path)):
+        for path, subdirs, files in os.walk("{}/{}".format(prefix_local_path,folder_name)):
+            for name in files:
+                #print (name)
+                pdf_filename = str(os.path.join(path, name))
+                pdf_to_png(pdf_filename,version)
 
 
-for folder_name in os.listdir('./docs-project-dragon'):
-    print ('Augmenting this folder: ' + folder_name)
-    augment_dataset(folder_name,1000,2)
-    print (folder_name + 'Augmentation: DONE')
-    for path, subdirs, files in os.walk("./docs-project-dragon/{}".format(folder_name)):
-	for name in files:
-	    pdf_filename = str(os.path.join(path, name))
-	    #print ('Appending to csv:')
-	    append_to_csv(pdf_filename,2)
-	    #print ('Uploading to GCS')
-	    upload_img(pdf_filename,'project-dragon-2019-vcm',2)
+    for folder_name in os.listdir(prefix_local_path):
+        print ('Augmenting this folder: ' + folder_name)
+        augment_dataset(folder_name,tot_aug_img = aug_size,version)
+        print (folder_name + 'Augmentation: DONE')
+        for path, subdirs, files in os.walk("{}/{}".format(prefix_local_path,folder_name)):
+    	for name in files:
+    	    pdf_filename = str(os.path.join(path, name))
+    	    #print ('Appending to csv:')
+    	    append_to_csv(pdf_filename,version)
+    	    #print ('Uploading to GCS')
+    	    upload_img(pdf_filename,bucket_name,version)
+    
+    # Final step upload csv that aggregates all data 
+    upload_csv(dataset_name,version,bucket_name)
+    print ('Preprocessing: DONE. Ready for training.')
 

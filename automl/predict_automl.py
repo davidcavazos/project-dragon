@@ -36,11 +36,11 @@ def pdf_to_png(gcs_path):
     
     if pdf_ext == '.pdf':
         try:
-            os.mkdir('./preds_img')
+            os.mkdir('./preds')
         except:
             pass
-        destination_pdf_name = './preds_img' + '/' + pdf_title
-        destination_img_name = './preds_img' + '/' + pdf_wtout_ext + '.png'
+        destination_pdf_name = './preds' + '/' + pdf_title
+        destination_img_name = './preds' + '/' + pdf_wtout_ext + '.png'
 
         # Download pdf
         bucket = storage_client.get_bucket(bucket_name)

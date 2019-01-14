@@ -36,6 +36,16 @@ pip install -r requirements.txt
 gsutil -m cp gs://$BUCKET_NAME/$GCS_PREFIX_OF_FILES ./
 ```
 
+## Directory tructure of your VM:
+├── main_folder_name                  	      # folder downloaded from gcs that contains all labeled images
+	├── label1_folder_name          	      # folder segmentation per document label
+		├── document_name.pdf                 # document file
+	├── label2_folder_name               	  # folder segmentation per document label
+		├── ...                				  
+├── preds									  # prediction folder that contain all document to be predicted
+	├── document_file.pdf 					  # document file
+	├── ...
+
 ## Preprocessing 
 ```bash
 python preprocess.py \
@@ -50,7 +60,7 @@ python preprocess.py \
 
 ## Train your model 
 ```bash
-python utils.py
+python modeling.py
 --$PROJECT_ID \
 --$COMPUTE_REGION \
 --'invoices-jan-2019' \

@@ -1,0 +1,11 @@
+[Unit]
+Description=simple python script
+
+[Service]
+WorkingDirectory=/etc/docex
+ExecStart=/usr/bin/python main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

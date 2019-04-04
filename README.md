@@ -9,7 +9,7 @@ To use this application , one should have active Google account, a project on GC
 bash automlsetup.sh
 ```
 
-## Setup GitLab Repo on VM
+## Setup Github Repo on VM
 - Wait for 5 minutes after the VM setup is complete and then attempt SSH into the VM using command below
 ```shell
 gcloud compute --project $PROJECT_ID ssh --zone $PROJECT_ZONE $INSTANCE_NAME

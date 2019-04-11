@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="column column-20">
+        <mat-card>
+            <app-views [createdView]="createdView" (selectedView)="setFilters($event)"
+                [currentFilters]="filteredFields"></app-views>
+        </mat-card>
+        <mat-card class="mt20">
+            <app-filters #appFilter (filteredFields)="filteredFields = $event" (createdView)="createdView = $event"
+                [filters]="filters" [autoSuggestOptions]="autoSuggestOptions"></app-filters>
+        </mat-card>
+    </div>
+    <div class="column column-50">
+        <!-- <mat-card class="mb20">
+            <app-search></app-search>
+        </mat-card> -->
+        <app-classification *ngIf="isClassificationResultReady; else placeHolder"
+            [autoSuggestOptions]="autoSuggestOptions" [classificationData]="classificationData"
+            (saveClassificationTagsFlag)="isClassificationResultReady = $event"></app-classification>
+
+        <ng-template #placeHolder>
+            <app-table [appFilter]="appFilter" [filteredFields]="filteredFields" [sourceList]="sourceList"
+                (autoSuggestOptions)="autoSuggestOptions = $event"></app-table>
+        </ng-template>
+        <!-- <ng-template #placeHolder>
+            <img src="assets/placeholder.png" class="img-responsive">
+        </ng-template> -->
+    </div>
+    <div class="column column-30">
+        <mat-card>
+            <app-sources [sourceList]="sourceList" (newSource)="verifyAndAddSource($event)"
+                (deleteSource)="deleteSource($event)" (selectedSources)="predictDocument($event)"
+                [isClassificationResultReady]="isClassificationResultReady"></app-sources>
+        </mat-card>
+    </div>
+</div>
+<div class="loader-container" *ngIf="loaderService.isLoading | async">
+    <mat-spinner [diameter]="40"></mat-spinner>
+</div>

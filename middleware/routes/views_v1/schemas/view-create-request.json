@@ -1,0 +1,43 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "CreateViewRequest": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "viewname": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "key": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "value": {
+                        "type": "string"
+                    },
+                    "operator": {
+                        "$ref": "#/definitions/non-empty-string"
+                    }
+                },
+                "required": [
+                    "viewname",
+                    "key",
+                    "value",
+                    "operator"
+                ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    },
+    "required": [
+        "CreateViewRequest"
+    ],
+    "definitions": {
+        "non-empty-string": {
+            "type": "string",
+            "minLength": 1
+        }
+    }
+}

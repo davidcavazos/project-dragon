@@ -1,0 +1,37 @@
+{
+  "name": "docex-backend-api",
+  "version": "1.0.0",
+  "description": "middleware nodejs apis",
+  "main": "app.js",
+  "dependencies": {
+    "@google-cloud/automl": "^0.1.3",
+    "@google-cloud/datastore": "^3.1.1",
+    "@google-cloud/pubsub": "^0.28.1",
+    "@google-cloud/storage": "^2.4.2",
+    "@google-cloud/vision": "^0.25.0",
+    "ajv": "^6.10.0",
+    "bluebird": "^3.5.3",
+    "body-parser": "^1.16.0",
+    "cors": "^2.8.5",
+    "express": "^4.14.1",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.4",
+    "md5": "^2.2.1",
+    "moment": "^2.24.0",
+    "sharp": "^0.22.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
+  },
+  "scripts": {
+    "start": "node app"
+  },
+  "keywords": [
+    "middleware",
+    "nodejs"
+  ],
+  "author": "Parvez Shaikh",
+  "license": "ISC"
+}

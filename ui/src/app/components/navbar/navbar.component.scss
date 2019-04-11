@@ -1,0 +1,47 @@
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.cloud-logo-container {
+  text-align: center;
+  height: 70px;
+  width: 318px;
+  position: absolute;
+  bottom: 10px;
+  left: 32px;
+}
+
+.cloud-logo {
+  position: absolute;
+  left: 64px;
+  height: 90px;
+  z-index: 999;
+  bottom: -5px;
+}
+
+.powered-by-text {
+  font-size: 1em; 
+  color: #0c0c0c;
+  left: 6px;
+  bottom: 7px;
+  position: absolute;
+}
+
+.logout {
+  font-size: 13px;
+  cursor: pointer;
+}

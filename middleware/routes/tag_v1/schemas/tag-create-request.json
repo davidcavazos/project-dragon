@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "CreateTagRequest": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "documentPath": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "classificationType": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "classificationScore": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "columnName": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "columnValue": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "xCoordinate": {
+                        "type": "number"
+                    },
+                    "width": {
+                        "type": "number"
+                    },
+                    "yCoordinate": {
+                        "type": "number"
+                    },
+                    "height": {
+                        "type": "number"
+                    },
+                    "createdBy": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "createdDate": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "updatedBy": {
+                        "$ref": "#/definitions/non-empty-string"
+                    },
+                    "updatedDate": {
+                        "$ref": "#/definitions/non-empty-string"
+                    }
+                },
+                "required": [
+                    "documentPath",
+                    "classificationType",
+                    "classificationScore",
+                    "columnName",
+                    "columnValue",
+                    "xCoordinate",
+                    "yCoordinate",
+                    "height",
+                    "width"
+                ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    },
+    "required": [
+        "CreateTagRequest"
+    ],
+    "definitions": {
+        "non-empty-string": {
+            "type": "string",
+            "minLength": 1
+        }
+    }
+}

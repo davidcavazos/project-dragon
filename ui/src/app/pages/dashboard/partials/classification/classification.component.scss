@@ -1,0 +1,19 @@
+#centered-card {
+    display: flex;
+    justify-content: center;
+    overflow:auto;
+}
+
+.image-content {
+    box-sizing: border-box;
+    position: relative;
+    display: inline-block;   
+}
+
+#canvas.vs-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}

@@ -1,0 +1,21 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav-content>
+        <mat-toolbar color="primary">
+            <div class="container" style="display: flex; justify-content: space-between">
+                <img src="https://battlecrate.q-appliedai.com/assets/quantiphi.png" class="logo" alt="">
+            </div>
+            <div class="container" style="display: flex; justify-content: space-between">
+                <span>DocEx</span>
+                <span class="logout" (click)="logout()">LogOut</span>
+            </div>
+        </mat-toolbar>
+        <!-- Add Content Here -->
+        <div class="container">
+            <router-outlet></router-outlet>
+        </div>
+        <!-- <div class="cloud-logo-container">
+            <i class="powered-by-text">Powered by</i>
+            <img src="https://battlecrate.q-appliedai.com/assets/google cloud logo.png" class="cloud-logo" alt="" />
+        </div> -->
+    </mat-sidenav-content>
+</mat-sidenav-container>

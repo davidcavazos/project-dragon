@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Add new source</h1>
+<div mat-dialog-content [formGroup]="sourceForm">
+    <div class="row">
+        <div class="column">
+            <mat-form-field>
+                <input type="text" placeholder="Select platform" aria-label="Platform name" matInput
+                    formControlName="platformName" [disabled]="true">
+            </mat-form-field>
+        </div>
+        <div class="column">
+            <mat-form-field>
+                <input matInput placeholder="BucketName/Folder1" name="txtValue" formControlName="path">
+            </mat-form-field>
+        </div>
+    </div>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button color="warn" (click)="onNoClick()">Cancel</button>
+    <button mat-button (click)="onYesClick()" cdkFocusInitial [disabled]="!sourceForm.valid">Apply</button>
+</div>

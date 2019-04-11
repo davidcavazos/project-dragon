@@ -1,0 +1,15 @@
+<h2 class="centered">Views</h2>
+<div class="divider"></div>
+<mat-list>
+    <mat-list-item *ngFor="let view of views; let i = index" class="non-padded"
+        [ngClass]="{'highliter':selectedViewIndex == i}">
+        <mat-icon class="pointer" color="warn" (click)="deleteView(i)" matListIcon matTooltip="Delete view"
+            matTooltipPosition="right">delete</mat-icon>
+        <span matLine class="pointer" (click)="selectView(i)">{{view.name}}</span>
+    </mat-list-item>
+</mat-list>
+<div class="divider"></div>
+<div class="mt10">
+    <button mat-raised-button color="primary" (click)="saveAsView()"
+        [disabled]="!currentFilters || currentFilters.length===0">Save as view</button>
+</div>

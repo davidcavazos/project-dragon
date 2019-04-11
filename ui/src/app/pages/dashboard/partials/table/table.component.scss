@@ -1,0 +1,28 @@
+table {
+    min-width: 100%;
+    .mat-cell{
+        font-size: 12px;
+        padding: 0px 10px;
+    }
+    .no-wrap{
+        white-space: nowrap;
+    }
+    mat-icon{
+        font-size: 1.4em;
+        cursor: pointer;
+        display: inline-flex;
+        vertical-align: top;
+    }
+}
+
+.tableContainer {
+    overflow-x: auto;
+}
+
+th.mat-sort-header-sorted {
+    color: black;
+}
+
+.displayInline{
+    display: inline-flex;
+}

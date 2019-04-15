@@ -32,7 +32,3 @@ Create a local clone of this repository to get set up quickly with Google Cloud 
 ```sh
 $ npm start
 ```
-
-## License
-
-ISC © [Parvez Shaikh]()

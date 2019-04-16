@@ -18,9 +18,7 @@ gcloud compute --project $PROJECT_ID ssh --zone $PROJECT_ZONE $INSTANCE_NAME
 pip install -r requirement.txt
 ```
 
-## config.py
-
-- Python script to import the constant variables. _Specify all your variables here_.
+- Specify all the environments variables DATASET_NAME, MODEL_NAME_PREFIX, PUBSUB_VERIFICATION_TOKEN
 
 ## create_directory.py
 

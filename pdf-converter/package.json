@@ -12,7 +12,6 @@
     "conveter"
   ],
   "author": "Parvez Shaikh",
-  "license": "ISC",
   "dependencies": {
     "@google-cloud/pubsub": "^0.28.1",
     "@google-cloud/storage": "^2.4.3",

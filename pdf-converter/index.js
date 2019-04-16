@@ -1,6 +1,6 @@
 'use strict';
 
-const appConfig = require('./config/config.json');
+const appConfig = require('./config');
 const Pubsub = require('@google-cloud/pubsub').PubSub;
 
 /**

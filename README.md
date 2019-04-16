@@ -1,5 +1,7 @@
 # Project DocEx
 
+This is NOT an official Google product.
+
 ## Development environment
 
 Before you start, make sure you have the following installed:
@@ -19,12 +21,32 @@ ng version
 
 ## Setup
 
-First, you will need to [create a new Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+First, select the project you want to use or create a new project.
 
+Option A: create a new project [create a new Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
 ```sh
 PROJECT_ID=your-project-id
 gcloud projects create $PROJECT_ID
+```
+Option B: use your currently selected project
+```sh
+PROJECT_ID=$(gcloud config get-value project)
+```
+Option C: select an existing project
+```sh
+PROJECT_ID=your-project-id
+gcloud config set project $PROJECT_ID
+```
 
+Then enable the Cloud Functions, AutoML, Cloud Pub/Sub, Cloud Storage API.
+
+Update components
+```sh
+gcloud components update
+gcloud services enable cloudfunctions.googleapis.com 
+gcloud services enable automl.googleapis.com
+gcloud services enable pubsub.googleapis.com
+gcloud services enable storage-component.googleapis.com
 ```
 
 Once you have a project, you will also need to [create a Cloud Storage bucket](https://cloud.google.com/storage/docs/creating-buckets).
@@ -46,34 +68,34 @@ PDF_CONVERTER_TOPIC=your-pdf-converter-topic-name
 gcloud pubsub topics create projects/$PROJECT_ID/topics/$PDF_CONVERTER_TOPIC
 gcloud pubsub subscriptions create projects/$PROJECT_ID/subscriptions/$PDF_CONVERTER_TOPIC
 ```
+- Inside the VM's shell, clone repo by following command prompts (Clone with https)
+
+```shell
+git clone https://github.com/davidcavazos/project-dragon.git
+```
 
 ## Deploying PDF to Image converter Colud Function
 
 Follow below steps to create trigger on input bucket to convert pdf file to image.
 
-1. Enable the Cloud Functions API.
-
-2. Update components
-```sh
-gcloud components update
-
-```
-
-3. Change to the directory that contains the Cloud Functions sample code:
+1. Change to the directory that contains the Cloud Functions sample code:
 ```sh
 cd pdf-converter
 ```
 
-4. Deploy cloud function
+2. Deploy cloud function
 ```sh
-gcloud functions deploy pdf-converter --runtime nodejs10 --trigger-resource $BUCKET_NAME --trigger-event google.storage.object.finalize
+gcloud functions deploy pdf-converter \
+	--runtime nodejs10 \
+	--trigger-resource $BUCKET_NAME \
+	--trigger-event google.storage.object.finalize
 ```
 
 ## Deploying PDF to Image on Compute Engine
 
 1. Create compute engine and SHH it
 
-2. Follow guide.md steps to setup compute engine environment and dependencies.
+2. Follow README.md steps to setup compute engine environment and dependencies.
 
 3. Clone this project and change to directory pdf-conveter
 

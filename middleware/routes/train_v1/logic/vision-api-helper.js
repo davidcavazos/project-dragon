@@ -1,6 +1,6 @@
 'use strict';
 
-const appConfig = require('../../../config/config.json');
+const appConfig = require('../../../config');
 const vision = require('@google-cloud/vision');
 const sharp = require('sharp');
 const gcpAPIHelper = require('./gcs-api-helper')();

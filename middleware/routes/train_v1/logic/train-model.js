@@ -1,7 +1,7 @@
 'use strict';
 
 const Pubsub = require('@google-cloud/pubsub').PubSub;
-const appConfig = require('../../../config/config.json');
+const appConfig = require('../../../config');
 const uuidv1 = require('uuid/v1')
 
 module.exports = (context, param) => {

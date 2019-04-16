@@ -1,9 +1,0 @@
-{
-    "secret": "e32bd326eae57036be5c17f1bd6b9bd36b7e5b8e",
-    "gcp": {
-        "projectId": "project-dragon-2019",
-        "computeRegion": "us-central1",
-        "modelId": "ICN3914447273581097112",
-        "topicName": "pdf-converter"
-    }
-}

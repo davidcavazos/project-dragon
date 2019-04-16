@@ -1,3 +1,4 @@
+This is NOT an official Google product.
 
 # Prepare for installing
 
@@ -19,9 +20,6 @@
     PROMPT> sudo apt install nodejs
     PROMPT> sudo apt-get install git
 
-
-I use GM to convert PDF to png and jpg images.
-
 # Download GraphicsMagick's source code (9 MB). This takes about 10 minutes
 
     PROMPT> wget ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/1.3/GraphicsMagick-1.3.26.tar.gz
@@ -33,8 +31,6 @@ I use GM to convert PDF to png and jpg images.
     PROMPT> ./configure
 
 # Check that the result of configure looks like this
-
-It must have png and jpg support, otherwise GraphicsMagick won't be to much help making thumbnails.
 
     GraphicsMagick is configured as follows. Please verify that this
     configuration matches your expectations.

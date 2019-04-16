@@ -1,7 +1,7 @@
 'use strict';
 
 const { Storage } = require('@google-cloud/storage');
-const appConfig = require('./config/config.json');
+const appConfig = require('./config');
 const storage = new Storage(Object.assign({}, appConfig.gcp));
 const Pubsub = require('@google-cloud/pubsub').PubSub;
 const pdf2img = require('pdf2img');

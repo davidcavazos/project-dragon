@@ -1,7 +1,7 @@
 'use strict';
 
 const expressJwt = require('express-jwt');
-const config = require('../config/config.json');
+const config = require('../config');
 
 module.exports = () => {
     const { secret } = config;

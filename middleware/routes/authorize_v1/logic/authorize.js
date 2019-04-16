@@ -4,7 +4,7 @@
 const { Datastore } = require('@google-cloud/datastore');
 const jwt = require('jsonwebtoken');
 const md5 = require('md5');
-const appConfig = require('../../../config/config.json');
+const appConfig = require('../../../config');
 
 module.exports = (params) => {
     return findUser(params)

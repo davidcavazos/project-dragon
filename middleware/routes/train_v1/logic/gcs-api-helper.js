@@ -1,7 +1,7 @@
 'use strict';
 
 const { Storage } = require('@google-cloud/storage');
-const appConfig = require('../../../config/config.json');
+const appConfig = require('../../../config');
 const storage = new Storage(Object.assign({}, appConfig.gcp));
 const whitelisted = ['.jpg', '.jpeg', '.jfif', '.tiff', '.png', '.tif', '.gif'];
 

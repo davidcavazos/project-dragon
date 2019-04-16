@@ -1,7 +1,7 @@
 'use strict';
 
 const { Datastore } = require('@google-cloud/datastore');
-const appConfig = require('../../../config/config.json');
+const appConfig = require('../../../config');
 
 let sourceModel = () => {
 

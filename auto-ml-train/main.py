@@ -2,24 +2,30 @@
 Main Python Script to run the whole pipeline
 '''
 import json
-
+import os
 from tinydb import TinyDB
 
 from flask import Flask
 from google.cloud import pubsub_v1
 
-from config import (BUCKET_NAME, COMPUTE_REGION,
-                    DATASET_NAME, MODEL_NAME_PREFIX, OPTIMAL_AUGMENTATION,
-                    PROJECT_ID, PUBSUB_VERIFICATION_TOKEN, PUBSUB_TOPIC,
-                    PUBSUB_SUBSCRIBER)
 from create_directory import create_dir
 from modeling import make_model
 
 from preprocess import preprocess_automl
 
 
-APP = Flask(__name__)
 
+BUCKET_NAME = os.environ['BUCKET_NAME']
+COMPUTE_REGION = os.environ['COMPUTE_REGION']
+DATASET_NAME = os.environ['DATASET_NAME']
+MODEL_NAME_PREFIX = os.environ['MODEL_NAME_PREFIX']
+OPTIMAL_AUGMENTATION = True
+PROJECT_ID = os.environ['PROJECT_ID']
+PUBSUB_VERIFICATION_TOKEN = os.environ['PUBSUB_VERIFICATION_TOKEN']
+PUBSUB_TOPIC = os.environ['ML_ENGINE_TOPIC']
+
+
+APP = Flask(__name__)
 
 SUBSCRIBER = pubsub_v1.SubscriberClient()
 TOPIC_NAME = 'projects/{project_id}/topics/{topic}'.format(
@@ -29,7 +35,7 @@ TOPIC_NAME = 'projects/{project_id}/topics/{topic}'.format(
 
 SUBSCRIPTION_NAME = 'projects/{project_id}/subscriptions/{sub}'.format(
     project_id=PROJECT_ID,
-    sub=PUBSUB_SUBSCRIBER,  # Set this to something appropriate.
+    sub=PUBSUB_TOPIC,  # Set this to something appropriate.
 )
 
 

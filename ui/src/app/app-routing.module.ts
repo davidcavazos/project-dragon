@@ -7,7 +7,7 @@ import { DashboardService } from './services/guard/dashboard.service';
 import { LoginService } from './services/guard/login.service';
 
 const routes: Routes = [
-    { path: 'login', component: LoginComponent, canActivate: [LoginService] },
+    { path: 'login', component: LoginComponent },//, canActivate: [LoginService] },
     { path: 'dashboard', component: DashboardComponent, canActivate: [DashboardService] },
     { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
     { path: '**', redirectTo: 'dashboard' }

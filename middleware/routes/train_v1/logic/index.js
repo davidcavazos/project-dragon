@@ -7,7 +7,7 @@ const gcpAPIHelper = require('./gcs-api-helper')();
 
 module.exports = (context, params) => {
 
-    return Promise.map(params.Sources, (s) => gcpAPIHelper.listFiles(s))
+    return Promise.map(params.Sources, (s) => gcpAPIHelper.listFiles(s), { concurrency: 3 })
         .then((_sources) => {
             let _soc = [].concat.apply([], _sources);
             return Promise.map(_soc, (source) => {
@@ -26,7 +26,7 @@ module.exports = (context, params) => {
                             visionAPIResponse: visionAPIResult
                         }
                     })
-            });
+            }, { concurrency: 3 });
         })
         .then((result) => {
             return {

@@ -5,21 +5,22 @@ const appConfig = require('../../../config');
 
 let tagModel = () => {
 
-    const NUM_RESULTS_PER_PAGE = 15;
     const kind = 'tagged-doc';
     const datastore = new Datastore({
         projectId: appConfig.gcp.projectId
     });
 
     this.get = (input) => {
-        const { orderByColumn, orderby, nextPageCursor } = input;
+        const { orderByColumn, orderby, nextPageCursor, pageSize } = input;
         const query = datastore.createQuery(kind);
 
         if (orderByColumn) {
             query.order(orderByColumn || 'name', { descending: orderby && orderby.toLowerCase() === 'descending' });
         }
 
-        query.limit(NUM_RESULTS_PER_PAGE);
+        if (pageSize) {
+            query.limit(pageSize);
+        }
 
         if (nextPageCursor) {
             query.start(nextPageCursor);
@@ -50,18 +51,7 @@ let tagModel = () => {
                 let tags = result[0].map(r => {
                     return Object.assign({}, r, { id: r[datastore.KEY].name })
                 });
-
-                let response = bounds.map((b) => {
-                    let { x, y } = b;
-                    let exist = tags.filter((r) => {
-                        return y >= r.yCoordinate && y <= (r.yCoordinate + (r.height + (r.height * 0.1))) && x >= r.xCoordinate && x <= (r.xCoordinate + (r.width + (r.width * 0.1)))
-                    })[0];
-                    if (exist) {
-                        return Object.assign({}, b, { color: 'limegreen', columnName: exist.columnName });
-                    }
-                    return Object.assign({}, b, { color: 'red' });
-                })
-                return response;
+                return tags;
             });
     }
 

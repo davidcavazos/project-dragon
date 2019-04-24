@@ -5,17 +5,19 @@ const appConfig = require('../../../config');
 
 let viewModel = () => {
 
-    const NUM_RESULTS_PER_PAGE = 15;
     const kind = 'views';
     const datastore = new Datastore({
         projectId: appConfig.gcp.projectId
     });
 
     this.get = (input) => {
-        const { orderByColumn, orderby, nextPageCursor } = input;
+        const { orderByColumn, orderby, nextPageCursor, pageSize } = input;
         const query = datastore.createQuery(kind)
-            .order(orderByColumn || 'viewname', { descending: orderby && orderby.toLowerCase() === 'descending' })
-            .limit(NUM_RESULTS_PER_PAGE);
+            .order(orderByColumn || 'viewname', { descending: orderby && orderby.toLowerCase() === 'descending' });
+
+        if (pageSize) {
+            query.limit(pageSize);
+        }
 
         if (nextPageCursor) {
             query.start(nextPageCursor);

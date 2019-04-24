@@ -13,7 +13,8 @@ module.exports = (req, res, next) => {
     }
     let params = {
         bucketName: req.query.bucketname,
-        srcFilename: req.query.srcfilename
+        srcFilename: req.query.srcfilename,
+        pageSize: req.query.pagesize
     }
     return gcpAPIHelper.downloadFile(params)
         .then(result => res.status(200).send({ GetImageResponse: `data:image/png;base64, ${result.toString('base64')}` }))

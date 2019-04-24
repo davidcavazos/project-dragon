@@ -31,7 +31,7 @@ export class FiltersComponent implements OnInit {
     }
 
     deleteFilterByColName = (key) => {
-        this.filters = this.filters.filter(f => !(f.operator === 'is populated' && f.key === key));
+        this.filters = this.filters.filter(f => !(f.key === key));
         this.filteredFields.emit(this.filters);
     }
 

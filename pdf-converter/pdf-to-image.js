@@ -37,8 +37,8 @@ let convert = (file) => {
             let opts = {
                 type: 'png',
                 outputdir: path.dirname(tempFilePath),
-                outputname: path.basename(tempFilePath, path.extname(tempFilePath)),
-                page: 1
+                outputname: path.basename(tempFilePath, path.extname(tempFilePath))//,
+                // page: 1
             };
 
             pdf2img.setOptions(opts);

@@ -5,22 +5,22 @@ const appConfig = require('../../../config');
 
 let tagModel = () => {
 
-    const NUM_RESULTS_PER_PAGE = 15;
     const kind = 'tagged-doc';
     const datastore = new Datastore({
         projectId: appConfig.gcp.projectId
     });
 
     this.get = (input) => {
-        const { orderByColumn, orderby, nextPageCursor } = input;
+        const { orderByColumn, orderby, nextPageCursor, pageSize } = input;
         const query = datastore.createQuery(kind);
 
         if (orderByColumn) {
             query.order(orderByColumn || 'name', { descending: orderby && orderby.toLowerCase() === 'descending' });
-
         }
 
-        query.limit(NUM_RESULTS_PER_PAGE);
+        if (pageSize) {
+            query.limit(pageSize);
+        }
 
         if (nextPageCursor) {
             query.start(nextPageCursor);

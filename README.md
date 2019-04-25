@@ -116,7 +116,7 @@ pm2 pdf-to-image.js
 
 2. Clone this project and change to directory auto-ml-train
 
-3. On the train-bucket-name upload the static documents with subfolders as label    names that contains respective documents corresponding to labels 
+3. On the TRAIN-BUCKET-NAME upload the static documents with subfolders as label    names that contains respective documents corresponding to labels 
 
 4. Follow README.md steps to setup compute engine environment and dependencies.
 

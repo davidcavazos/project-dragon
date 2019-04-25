@@ -18,7 +18,7 @@ gcloud compute --project $PROJECT_ID ssh --zone $PROJECT_ZONE $INSTANCE_NAME
 pip install -r requirement.txt
 ```
 
-- Specify all the environments variables DATASET_NAME, MODEL_NAME_PREFIX, PUBSUB_VERIFICATION_TOKEN
+- Specify all the environments variables DATASET_NAME, MODEL_NAME_PREFIX, PUBSUB_VERIFICATION_TOKEN,TRAIN_BUCKET_NAME
 
 ## create_directory.py
 

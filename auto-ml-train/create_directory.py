@@ -34,6 +34,7 @@ def create_dir(sess_id, project_id):
                 results[i].get('documentPath'), os.path.join(os.getcwd(),
                                                              sess_id,
                                                              results[i].get('classificationType'))))
+    os.system("gsutil -m cp -r gs://automl-train/* {}\/".format(os.path.join(os.getcwd(),sess_id))
     print 'Directory structure is DONE !'
     return os.path.join(os.getcwd(), sess_id)
 

@@ -49,10 +49,12 @@ gcloud services enable pubsub.googleapis.com
 gcloud services enable storage-component.googleapis.com
 ```
 
-Once you have a project, you will also need to [create a Cloud Storage bucket](https://cloud.google.com/storage/docs/creating-buckets).
+Once you have a project, you will also need to [create two Cloud Storage buckets](https://cloud.google.com/storage/docs/creating-buckets).
 ```sh
 BUCKET_NAME=your-bucket-name
 gsutil mb gs://$BUCKET_NAME
+TRAIN_BUCKET_NAME=your-train-bucket-name
+gsutil mb gs://$TRAIN_BUCKET_NAME
 ```
 
 Create the Pub/Sub topic and subscription to train model.
@@ -114,9 +116,11 @@ pm2 pdf-to-image.js
 
 2. Clone this project and change to directory auto-ml-train
 
-3. Follow README.md steps to setup compute engine environment and dependencies.
+3. On the train-bucket-name upload the static documents with subfolders as label    names that contains respective documents corresponding to labels 
 
-4. Install dependencies and run project.
+4. Follow README.md steps to setup compute engine environment and dependencies.
+
+5. Install dependencies and run project.
 
 ```sh
 screen

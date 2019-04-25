@@ -22,7 +22,7 @@ pip install -r requirement.txt
 
 ## create_directory.py
 
-- Python script that creates directory structure for storing documents.
+- Python script that creates directory structure for storing documents and copies static documents from train-bucket to local
 
 ### Directory structure in VM that would be created:
 ```

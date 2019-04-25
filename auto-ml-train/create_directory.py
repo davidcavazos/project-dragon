@@ -6,7 +6,7 @@ Creating directory structure for storing documents
 # -*- coding: utf-8 -*-
 import os
 from google.cloud import datastore
-
+TRAIN_BUCKET_NAME = os.environ['TRAIN_BUCKET_NAME']
 
 
 
@@ -34,7 +34,7 @@ def create_dir(sess_id, project_id):
                 results[i].get('documentPath'), os.path.join(os.getcwd(),
                                                              sess_id,
                                                              results[i].get('classificationType'))))
-    os.system("gsutil -m cp -r gs://automl-train/* {}\/".format(os.path.join(os.getcwd(),sess_id))
+    os.system("gsutil -m cp -r gs://{}/* {}\/".format(TRAIN_BUCKET_NAME,os.path.join(os.getcwd(),sess_id))
     print 'Directory structure is DONE !'
     return os.path.join(os.getcwd(), sess_id)
 

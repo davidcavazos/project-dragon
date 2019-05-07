@@ -1,0 +1,16 @@
+<div class="row login-form-container">
+    <div class="column column-33 column-offset-33">
+<mat-card>
+    <form class="login-form">
+        <h2 class="centered">Sign In</h2>
+        <mat-form-field class="full-width" MatFormFieldControl>
+            <input MatFormFieldControl matInput placeholder="Username" name="txtUsername" [(ngModel)]="user.username">
+        </mat-form-field>
+        <mat-form-field class="full-width" MatFormFieldControl>
+            <input MatFormFieldControl matInput placeholder="Password" type="password" name="txtPassword" [(ngModel)]="user.password">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="login()">Login</button>
+    </form>
+</mat-card>
+</div>
+</div>

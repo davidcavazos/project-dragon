@@ -1,0 +1,24 @@
+<h2 class="centered">Sources</h2>
+<div class="divider"></div>
+
+<mat-list role="list" [formGroup]="form">
+    <mat-radio-group formControlName="selSrc">
+        <mat-list-item role="listitem" *ngFor="let source of sourceList">
+            <mat-radio-button [value]="source" (change)="onSourceSelect($event.value)">
+                {{source}}
+            </mat-radio-button>
+            <mat-icon class="pointer" color="warn" (click)="deleteSourceClick(source)" matTooltip="Delete source"
+                matTooltipPosition="right">delete</mat-icon>
+        </mat-list-item>
+    </mat-radio-group>
+</mat-list>
+
+<div class="divider"></div>
+<div class="row mt12">
+    <div class="column">
+        <button mat-raised-button color="primary" (click)="train()">Train</button>
+    </div>
+    <div class="column text-right">
+        <button mat-raised-button color="primary" (click)="verifyAndAddSource()">Add source</button>
+    </div>
+</div>

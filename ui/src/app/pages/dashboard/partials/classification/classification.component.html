@@ -1,0 +1,41 @@
+<div class="row mb5">
+    <div class="column">
+        <button mat-raised-button (click)="prevItem()" [disabled]="counter == 0" color="primary">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+    </div>
+    <div class="column text-right">
+        <button mat-raised-button (click)="nextItem()"
+            [disabled]="counter == (classificationData['PredictionResult'].length - 1)" color="primary">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div>
+</div>
+
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>Classifications</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-list class="mb20" *ngFor="let doc of currentItem['autoMLAPIResponse'].payload">
+            <mat-list-item>{{ doc.displayName }} ({{ doc.classification.score }})</mat-list-item>
+        </mat-list>
+        <div id="centered-card">
+            <div class="image-content mt-10">
+                <img #displayedImage *ngIf="imgSrc" [src]="imgSrc">
+                <canvas #drawingCanvas id="canvas" (click)="onImageClick($event)" class="vs-image" width="371"
+                    height="480"></canvas>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="row mt10">
+            <div class="column">
+                <button mat-raised-button color="warn" (click)="cancel()">Cancel</button>
+            </div>
+            <div class="column text-right">
+                <button mat-raised-button color="primary" (click)="saveClassificatioData()"
+                    [disabled]="!taggedData || taggedData.length===0">Save Classifications</button>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

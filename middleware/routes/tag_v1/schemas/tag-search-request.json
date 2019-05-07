@@ -1,0 +1,54 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "SearchTagRequest": {
+            "properties": {
+                "classificationType": {
+                    "$ref": "#/definitions/non-empty-string"
+                },
+                "bounds": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "x": {
+                                "type": "number"
+                            },
+                            "y": {
+                                "type": "number"
+                            },
+                            "width": {
+                                "type": "number"
+                            },
+                            "height": {
+                                "type": "number"
+                            }
+                        },
+                        "required": [
+                            "x",
+                            "y",
+                            "width",
+                            "height"
+                        ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                }
+            },
+            "required": [
+                "classificationType",
+                "bounds"
+            ]
+        }
+    },
+    "required": [
+        "SearchTagRequest"
+    ],
+    "definitions": {
+        "non-empty-string": {
+            "type": "string",
+            "minLength": 1
+        }
+    }
+}

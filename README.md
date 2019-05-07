@@ -1,81 +1,143 @@
-# Preprocessing and training AutoML models
+# Project DocEx
 
-- This repository contains documents belonging to the GoogleNext Demo - Docex. A product that search , classify and visualize concepts from Free-Form text. 
-To use this application , one should have active Google account, a project on GCP with billing enabled and a deep learning VM
+This is NOT an official Google product.
 
-## Automlsetup.sh
-- Bash script to enable automl for your project
-```shell
-bash automlsetup.sh
+## Development environment
+
+Before you start, make sure you have the following installed:
+* [Google Cloud SDK](https://cloud.google.com/sdk/install)
+* [Node JS](https://nodejs.org/en/download/)
+* [Angular JS](https://angular.io/guide/quickstart)
+* [Python 2](https://www.python.org/downloads/)
+
+Test your development environment.
+
+```sh
+gcloud version
+python2 --version
+node --version
+ng version
 ```
 
-## Setup Github Repo on VM
-- Wait for 5 minutes after the VM setup is complete and then attempt SSH into the VM using command below
-```shell
-gcloud compute --project $PROJECT_ID ssh --zone $PROJECT_ZONE $INSTANCE_NAME
+## Setup
+
+First, select the project you want to use or create a new project.
+
+Option A: create a new project [create a new Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+```sh
+PROJECT_ID=your-project-id
+gcloud projects create $PROJECT_ID
+```
+Option B: use your currently selected project
+```sh
+PROJECT_ID=$(gcloud config get-value project)
+```
+Option C: select an existing project
+```sh
+PROJECT_ID=your-project-id
+gcloud config set project $PROJECT_ID
 ```
 
+Then enable the Cloud Functions, AutoML, Cloud Pub/Sub, Cloud Storage API.
+
+Update components
+```sh
+gcloud components update
+gcloud services enable cloudfunctions.googleapis.com 
+gcloud services enable automl.googleapis.com
+gcloud services enable pubsub.googleapis.com
+gcloud services enable storage-component.googleapis.com
+```
+
+Once you have a project, you will also need to [create two Cloud Storage buckets](https://cloud.google.com/storage/docs/creating-buckets).
+```sh
+BUCKET_NAME=your-bucket-name
+gsutil mb gs://$BUCKET_NAME
+TRAIN_BUCKET_NAME=your-train-bucket-name
+gsutil mb gs://$TRAIN_BUCKET_NAME
+```
+
+Create the Pub/Sub topic and subscription to train model.
+```sh
+ML_ENGINE_TOPIC=your-automl-topic-name
+gcloud pubsub topics create projects/$PROJECT_ID/topics/$ML_ENGINE_TOPIC
+gcloud pubsub subscriptions create projects/$PROJECT_ID/subscriptions/$ML_ENGINE_TOPIC
+```
+
+Create the Pub/Sub topic and subscription to convert pdf to image.
+```sh
+PDF_CONVERTER_TOPIC=your-pdf-converter-topic-name
+gcloud pubsub topics create projects/$PROJECT_ID/topics/$PDF_CONVERTER_TOPIC
+gcloud pubsub subscriptions create projects/$PROJECT_ID/subscriptions/$PDF_CONVERTER_TOPIC
+```
 - Inside the VM's shell, clone repo by following command prompts (Clone with https)
+
 ```shell
 git clone https://github.com/davidcavazos/project-dragon.git
 ```
 
-## Install required packages
+## Deploying PDF to Image converter Colud Function
 
-```bash
-pip install -r requirements.txt
+Follow below steps to create trigger on input bucket to convert pdf file to image.
+
+1. Change to the directory that contains the Cloud Functions sample code:
+```sh
+cd pdf-converter
 ```
-## setup.sh
 
-- Bash script to start the service . Use this command to start the service 
-```bash 
+2. Deploy cloud function
+```sh
+gcloud functions deploy pdf-converter \
+	--runtime nodejs10 \
+	--trigger-resource $BUCKET_NAME \
+	--trigger-event google.storage.object.finalize
+```
+
+## Deploying PDF to Image on Compute Engine
+
+1. Create compute engine and SHH it
+
+2. Follow README.md steps to setup compute engine environment and dependencies.
+
+3. Clone this project and change to directory pdf-conveter
+
+4. Install dependencies and run project.
+
+```sh
+screen
+npm install
+npm install pm2 --g
+pm2 pdf-to-image.js
+```
+
+## Deploying AutoML Train Model to Compute Engine 
+
+1. Create compute engine and SHH it
+
+2. Clone this project and change to directory auto-ml-train
+
+3. On the TRAIN-BUCKET-NAME upload the static documents with subfolders as label    names that contains respective documents corresponding to labels 
+
+4. Follow README.md steps to setup compute engine environment and dependencies.
+
+5. Install dependencies and run project.
+
+```sh
+screen
 bash setup.sh
 ```
-## create_directory.py
+## Deploying to App Engine
 
-- Python script that creates directory structure for storing documents
+Deploying will take a couple minutes, but after that the application will autoscale to match the current load of the application.
 
-### Directory tructure of your VM:
+```sh
+# Build the Angular web application.
+cd ui
+npm install
+ng build --prod
+
+# Build the Middleware node application
+cd ../middleware
+npm install
+gcloud app deploy
 ```
-├── main_folder_name				# folder downloaded from gcs that contains all labeled images
-	├── label1_folder_name			# folder segmentation per document label
-		├── document_name.pdf 		# document file
-	├── label2_folder_name			# folder segmentation per document label
-		├── ...
-├── preds							# prediction folder that contain all document to be predicted
-	├── document_file.pdf 			# document file
-	├── ...
-```
-
-### project-dragon-2019-e3f6ead0cfb0 .json
-
-- Service account credentials for running the docex application
-
-## config.py
-
-- Python script to import the constant variables
-
-## create_directory.py
-
-- Python script that creates directory structure for storing documents
-
-## main.py 
-
-- Main Python Script to run the whole pipeline of docex
-
-## preprocess.py
-
-- Python script that takes pdf/img from local, convertS them to png,
-Augments them so that each label has 1000 images, creates a csv, 
-uploads the csv and images dataset to bucket for training 
-
-
-### version_counter.json
-
-- It takes in account the version of the AUTOML model being trained
-
-## Modeling.py
-- Python script that creates the Automl classification model using dataset on bucket and returns a Model ID
-
-
-

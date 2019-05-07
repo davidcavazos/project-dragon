@@ -1,0 +1,11 @@
+[Unit]
+Description= To restart the pipeline automatically in case it crashes due to some error
+
+[Service]
+WorkingDirectory=/path/to/directory
+ExecStart=/usr/bin/python main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

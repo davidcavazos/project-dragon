@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>Add your filter</h1>
+<div mat-dialog-content [formGroup]="filterForm">
+    <div class="row">
+        <div class="column">
+            <mat-form-field>
+                <input type="text" placeholder="Select key" aria-label="key name" matInput formControlName="key"
+                    [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        <div class="column">
+            <mat-form-field>
+                <mat-select placeholder="Operator" name="selOperator" formControlName="operator">
+                    <mat-option *ngFor="let operator of operators" [value]="operator">
+                        {{ operator }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="column" *ngIf="!isPopulatedOperatorSelected">
+            <mat-form-field>
+                <input matInput placeholder="Value" name="txtValue" formControlName="value">
+            </mat-form-field>
+        </div>
+    </div>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button color="warn" (click)="onNoClick()">Cancel</button>
+    <button mat-button (click)="onYesClick()" cdkFocusInitial [disabled]="!filterForm.valid">Apply</button>
+</div>

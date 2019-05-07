@@ -1,0 +1,45 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('//fonts.googleapis.com/css?family=Montserrat:300,400');
+@import './styles/grid.scss';
+@import './styles/utils.scss';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: 'Montserrat', sans-serif; font-size: 13px; }
+.mat-toolbar, .mat-toolbar h1, .mat-toolbar h2, .mat-toolbar h3, .mat-toolbar h4, .mat-toolbar h5, .mat-toolbar h6, h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+}
+
+.mat-button, .mat-fab, .mat-flat-button, .mat-icon-button, .mat-mini-fab, .mat-raised-button, .mat-stroked-button, .mat-form-field, .mat-table {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+}
+
+.mat-list-base .mat-list-option, .mat-list-base .mat-list-item {
+    font-size: 13px;
+}
+
+.mat-card, .mat-list-option, .mat-list-item {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.container {
+    width: 100%;
+    max-width: 1400px;
+    padding: 0.5em;
+    margin: 0 auto;
+}
+
+.centered {
+    text-align: center;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.non-padded {
+    > .mat-list-item-content {
+        padding: 0 !important;
+    }
+}
